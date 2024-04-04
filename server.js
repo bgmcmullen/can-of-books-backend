@@ -13,6 +13,8 @@ app.use(cors());
 const PORT = process.env.PORT || 3001;
 const MONGODB_URL = process.env.MONGODB_URL;
 
+//seed();
+
 mongoose.connect(MONGODB_URL);
 
 app.get('/books', async (req, res) => {
