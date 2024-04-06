@@ -2,10 +2,10 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const BookModel = require('./BookModel');
-const seed = require('./seed.js');
 const bodyParser = require('body-parser');
 
 
@@ -14,9 +14,10 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3001;
-const MONGODB_URL = process.env.MONGODB_URL;
+const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URL);
+
+mongoose.connect(MONGODB_URI);
 
 app.get('/books', async (req, res) => {
   try {
@@ -28,6 +29,7 @@ app.get('/books', async (req, res) => {
   }
 
 })
+
 
 app.delete('/books/:id', async (req, res) => {
   try {
