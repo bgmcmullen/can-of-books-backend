@@ -39,7 +39,6 @@ app.delete('/books/:id', async (req, res) => {
       return;
     }
 
-    console.log('Deleting book with ID:', req.params.id);
     
     // Attempt to delete the book by ID
     const result = await BookModel.findByIdAndDelete(req.params.id);
@@ -50,7 +49,16 @@ app.delete('/books/:id', async (req, res) => {
       return;
     }
 
-    console.log('Book deleted:', result);
+
+    app.put('/books/:id', async (req, res) => {
+      let id = req.params.id;
+      try {
+        await BookModel.findByIdAndUpdate(id, req.body);
+        res.status(200).send("Book updated successfully");
+      } catch (e) {
+        res.status(500).send(e.message);
+      }
+    });
     
     // Send a success response
     res.status(204).send('Book deleted successfully');
@@ -59,7 +67,7 @@ app.delete('/books/:id', async (req, res) => {
     console.error('Error deleting book:', error);
     res.status(500).send('Internal Server Error');
   }
-});
+}); 
 
 app.get('/test', (request, response) => {
 
@@ -75,7 +83,6 @@ app.post('/books', async (req, res) => {
 
     let book = new BookModel({ title, description, status });
 
-    console.log(book);
 
     await book.save();
     // Send a response
