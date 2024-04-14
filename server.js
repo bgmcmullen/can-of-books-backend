@@ -7,6 +7,7 @@ const express = require('express');
 const cors = require('cors');
 const BookModel = require('./BookModel');
 const bodyParser = require('body-parser');
+const verifyUser = require('./auth/authorize');
 
 
 const app = express();
@@ -19,9 +20,12 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose.connect(MONGODB_URI);
 
+app.use(verifyUser);
+
 app.get('/books', async (req, res) => {
+  let queryObject = {email: req.user.email};
   try {
-    let documents = await BookModel.find({});
+    let documents = await BookModel.find(queryObject);
     res.json(documents);
   } catch (e) {
     console.log('failed to find books');
@@ -52,8 +56,13 @@ app.delete('/books/:id', async (req, res) => {
 
     app.put('/books/:id', async (req, res) => {
       let id = req.params.id;
+
+      let { title, description, status } = req.body;
+
+      let email = req.user.email;
+  
       try {
-        await BookModel.findByIdAndUpdate(id, req.body);
+        await BookModel.findByIdAndUpdate(id, { email, title, description, status });
         res.status(200).send("Book updated successfully");
       } catch (e) {
         res.status(500).send(e.message);
@@ -81,7 +90,9 @@ app.post('/books', async (req, res) => {
   try {
     let { title, description, status } = req.body;
 
-    let book = new BookModel({ title, description, status });
+    let email = req.user.email;
+
+    let book = new BookModel({ email, title, description, status });
 
 
     await book.save();
