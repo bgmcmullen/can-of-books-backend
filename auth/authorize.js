@@ -9,7 +9,6 @@ function verifyUser(request, response, next) {
 
   function valid(err, user) {
     request.user = user;
-    console.log(request.user);
     next();
   }
 
